@@ -59,6 +59,9 @@ namespace AdministrationWebApi.Controllers
                 return _response.HandleError(ex);
             }
         }
-
+        protected override object GetPresent(Band entity)
+        {
+            return new BandsPresent(entity);
+        }
     }
 }

@@ -116,6 +116,8 @@ namespace AdministrationWebApi.Repositories.DataBase
             await _mailer.BandAction(band, _configuration["TemplatePages:UNBLOCK_BAND"]);
             return band.IsBlocked;
         }
+
+
     }
 }
 

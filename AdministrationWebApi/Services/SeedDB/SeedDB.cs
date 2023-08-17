@@ -32,16 +32,18 @@ namespace AdministrationWebApi.Services.SeedDB
                      .RuleFor(u => u.Birthday, f => f.Date.Past(30, DateTime.Now.AddYears(-18)))
                      .RuleFor(u => u.Role, f => f.PickRandom(roles))
                      .RuleFor(u => u.Password, f => f.Internet.Password(8))
+                     .RuleFor(u => u.Avatar, f => f.Internet.Avatar())
                      .RuleFor(u => u.IsEmailVerify, f => f.Random.Bool(0.8f))
                      .RuleFor(u => u.IsBlocked, f => f.Random.Bool(0.1f));
                 var users = _userFaker.Generate(50);
-                var producers= users.Where(user => user.Role.Name == "producer").Select(user=>new Producer() { User = user });
-                var musicians= users.Where(user => user.Role.Name == "musician").Select(user => new MemberBand() { User = user });
+                var producers = users.Where(user => user.Role.Name == "producer").Select(user => new Producer() { User = user });
+                var musicians = users.Where(user => user.Role.Name == "musician").Select(user => new MemberBand() { User = user });
                 var admins = users.Where(user => user.Role.Name == "admin").ToList();
 
                 var bandFaker = new Faker<Band>()
                     .RuleFor(b => b.Name, f => f.Company.CompanyName())
                     .RuleFor(b => b.Producer, f => f.PickRandom(producers))
+                    .RuleFor(u => u.Avatar, f => f.Image.PicsumUrl())
                     .RuleFor(b => b.CreatedAt, f => f.Date.Past(5))
                     .RuleFor(b => b.FullInfo, f => f.Lorem.Sentences(2))
                     .RuleFor(b => b.IsBlocked, f => f.Random.Bool(0.2f));
