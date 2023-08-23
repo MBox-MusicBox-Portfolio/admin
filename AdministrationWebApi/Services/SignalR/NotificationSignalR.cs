@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace AdministrationWebApi.Services.SignalR
 {
+
     public class NotificationSignalR : Hub
     {
         private readonly IHubContext<NotificationSignalR> _hubContext;

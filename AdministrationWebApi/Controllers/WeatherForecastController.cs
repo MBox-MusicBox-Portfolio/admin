@@ -35,52 +35,21 @@ namespace AdministrationWebApi.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            if (_db.Users?.Count() == 0)
-            {
-                var role_user=_db.Roles.FirstOrDefault(r=>r.Name== "user");
-                var role_admin = _db.Roles.FirstOrDefault(r => r.Name == "admin");
-                var status =_db.StatusApplications.FirstOrDefault(r=>r.Name== "new");
-                var user = new User()
-                {
-                    Name="user",
-                    Email="victorgolova@gmail.com",
-                    Password="password",
-                    Birthday=DateTime.Now,
-                    Role=role_user
-                };
-
-                var admin = new User()
-                {
-                    Name = "admin",
-                    Email = "admin@gmail.com",
-                    Password = "password",
-                    Birthday = DateTime.Now,
-                    Role = role_admin
-                };
-
-                var applications = new Applications()
-                {
-                    BandName="my band",
-                    FullInfo="my full info about band",
-                    Producer=user,
-                    Status=status,
-                };
-
-                _db.Applications.Add(applications);
-                _db.Users.Add(user);
-                _db.Users.Add(admin);
-                _db.SaveChanges();
-            }
             var id = Guid.NewGuid();
-            var msg = new SendObject()
+
+            var eventObj = new EventRoute()
             {
-                Id=id,
-                Email = "victorgolova@gmail.com",
-                Template = "user_delete",
-                Name="my name",
-                Body = new { Name = "My name" }
+                From = ": string | null",
+                Body = new
+                {
+                    Email = "victorgolova@gmail.com",
+                    Template = "user_delete",
+                    Name = "my name",
+                },
+                Template = "user_delete"
+
             };
-            _rabbit.SendMessage(msg, _configuration["Queue:MAILER"]);
+            _rabbit.SendMessage(eventObj, _configuration["Queue:MAILER"]);
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),

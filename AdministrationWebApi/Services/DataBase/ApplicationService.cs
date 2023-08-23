@@ -88,14 +88,14 @@ namespace AdministrationWebApi.Repositories.DataBase
                 throw new BadRequestException("The server error occurred");
             }
 
-            var msg = new SendObject()
-            {
-                Email = application.Producer?.Email,
-                Template = "application_change_status_mail", //change_status_application_mail
-                Name = application.Producer?.Name,
-                Body = new { Status = application.Status.Name }
-            };
-            _rabbit.SendMessage(msg, _configuration["Queue:MAILER"]);
+            //var msg = new SendObject()
+            //{
+            //    Email = application.Producer?.Email,
+            //    Template = "application_change_status_mail", //change_status_application_mail
+            //    Name = application.Producer?.Name,
+            //    Body = new { Status = application.Status.Name }
+            //};
+            //_rabbit.SendMessage(msg, _configuration["Queue:MAILER"]);
             await _hubContext.Clients.Group(application.Producer.Id.ToString()).SendAsync("ReceiveMessage", "change_status_applicaction");
             return application;
         }

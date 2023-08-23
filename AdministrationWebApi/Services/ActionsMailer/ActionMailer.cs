@@ -21,13 +21,13 @@ namespace AdministrationWebApi.Services.ActionsMailer
 
         public Task NewsDelete(News news)
         {
-            var msg = new SendObject()
-            {
-                Email = news.Member?.User?.Email,
-                Template = _configuration["TemplatePages:DELETE_NEWS"],
-                Body = new { Text = news.Text }
-            };
-            _rabbit.SendMessage(msg, queue);
+            //var msg = new SendObject()
+            //{
+            //    Email = news.Member?.User?.Email,
+            //    Template = _configuration["TemplatePages:DELETE_NEWS"],
+            //    Body = new { Text = news.Text }
+            //};
+            //_rabbit.SendMessage(msg, queue);
             return Task.CompletedTask;
         }
 
@@ -37,13 +37,13 @@ namespace AdministrationWebApi.Services.ActionsMailer
             {
                 foreach (var member in band.Members)
                 {
-                    var msg = new SendObject()
-                    {
-                        Email = member?.User?.Email,
-                        Template = template,
-                        Body = new { Name = song.Name, Band = band.Name }
-                    };
-                    _rabbit.SendMessage(msg, queue);
+                    //var msg = new SendObject()
+                    //{
+                    //    Email = member?.User?.Email,
+                    //    Template = template,
+                    //    Body = new { Name = song.Name, Band = band.Name }
+                    //};
+                    //_rabbit.SendMessage(msg, queue);
                 }
             }
 
@@ -55,13 +55,13 @@ namespace AdministrationWebApi.Services.ActionsMailer
             {
                 foreach (var member in band.Members)
                 {
-                    var msg = new SendObject()
-                    {
-                        Email = member?.User?.Email,
-                        Template = template,
-                        Body = new { Band = band.Name }
-                    };
-                    _rabbit.SendMessage(msg, queue);
+                    //var msg = new SendObject()
+                    //{
+                    //    Email = member?.User?.Email,
+                    //    Template = template,
+                    //    Body = new { Band = band.Name }
+                    //};
+                    //_rabbit.SendMessage(msg, queue);
                 }
             }
 
@@ -70,14 +70,14 @@ namespace AdministrationWebApi.Services.ActionsMailer
 
         public async Task UserAction(User user, string? template)
         {
-            var msg = new SendObject()
-            {
-                Email = user.Email,
-                Template = template,
-                Name= user.Name,
-                Body = new { Role=user.Role?.Name }
-            };
-          _rabbit.SendMessage(msg, queue);
+          //  var msg = new SendObject()
+          //  {
+          //      Email = user.Email,
+          //      Template = template,
+          //      Name= user.Name,
+          //      Body = new { Role=user.Role?.Name }
+          //  };
+          //_rabbit.SendMessage(msg, queue);
         }
     }
 }
