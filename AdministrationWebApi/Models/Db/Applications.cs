@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace AdministrationWebApi.Models.Db
 {
-    public class Applications
+    public class Applications:Entity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+      
         [Required]
         public string? BandName { get; set; }
         public string? FullInfo { get; set; }

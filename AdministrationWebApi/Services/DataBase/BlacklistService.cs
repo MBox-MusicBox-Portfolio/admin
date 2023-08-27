@@ -6,8 +6,6 @@ using AdministrationWebApi.Repositories.DataBase.Interfaces;
 using AdministrationWebApi.Services.ActionsMailer;
 using AdministrationWebApi.Services.DataBase;
 using AdministrationWebApi.Services.ResponseHelper;
-using AdministrationWebApi.Services.ResponseHelper.Interfaces;
-using AdministrationWebApi.Services.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,22 +15,18 @@ namespace AdministrationWebApi.Repositories.DataBase
     {
 
         private readonly IConfiguration _configuration;
-        private readonly IActionMailer _mailer;
-        private readonly IHubContext<NotificationSignalR> _hubContext;
-
+        private readonly IActionEventRoute _eventRoute;     
         private readonly IEntityRepository<User> _repositoryUser;
 
 
         public BlacklistService(IEntityRepository<BlacklistUser> repository,
             IConfiguration config,
-            IActionMailer rabbit,
-            IHubContext<NotificationSignalR> hubContext,
+            IActionEventRoute rabbit,            
             IEntityRepository<User> repositoryUser)
             : base(repository)
         {
             _configuration = config;
-            _mailer = rabbit;
-            _hubContext = hubContext;
+            _eventRoute = rabbit;
             _repositoryUser = repositoryUser;
         }
 
@@ -60,8 +54,7 @@ namespace AdministrationWebApi.Repositories.DataBase
                 Messqge = entity.Message
             };
             await AddAsync(item);
-            await _mailer.UserAction(item.User, _configuration["TemplatePages:USER_BLOCK"]);
-            await _hubContext.Clients.Group(item.User.Id.ToString()).SendAsync("ReceiveMessage", "blocked");
+            await _eventRoute.UserAction(item.User, _configuration["TemplatePages:USER_BLOCK"]);           
             return true;
         }
 
@@ -78,7 +71,7 @@ namespace AdministrationWebApi.Repositories.DataBase
             }
             user.IsBlocked = false;
             await _repositoryUser.UpdateAsync(user);
-            await _mailer.UserAction(user, _configuration["TemplatePages:USER_UNBLOCK"]);
+            await _eventRoute.UserAction(user, _configuration["TemplatePages:USER_UNBLOCK"]);
             return true;
         }
 

@@ -2,9 +2,9 @@
 
 namespace AdministrationWebApi.Models.Db
 {
-    public class BlacklistUser
+    public class BlacklistUser : Entity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        
         [Required]
         public User? User { get; set; }
         public User? Admin { get; set; }

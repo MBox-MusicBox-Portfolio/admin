@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace AdministrationWebApi.Models.Db
 {
-    public class MemberBand
+    public class MemberBand : Entity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+       
          public User? User { get; set; }
         public string? Info { get; set; }
         public bool IsEdit { get; set; } = false;

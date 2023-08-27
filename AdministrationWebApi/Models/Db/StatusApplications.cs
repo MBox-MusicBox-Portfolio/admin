@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace AdministrationWebApi.Models.Db
 {
-    public class StatusApplications
+    public class StatusApplications : Entity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        
         [Required]
         public string? Name { get; set; }
         [JsonIgnore]

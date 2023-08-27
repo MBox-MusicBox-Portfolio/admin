@@ -2,7 +2,6 @@ using AdministrationWebApi.Models.Db;
 using Microsoft.AspNetCore.Mvc;
 using AdministrationWebApi.Models.RabbitMq;
 using AdministrationWebApi.Services.RabbitMQ;
-using AdministrationWebApi.Services.SignalR;
 using Microsoft.AspNetCore.SignalR;
 
 namespace AdministrationWebApi.Controllers
@@ -18,19 +17,17 @@ namespace AdministrationWebApi.Controllers
         
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, RabbitMqService rabbit, IConfiguration configuration, IHubContext<NotificationSignalR> hubContext, AppDb db)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, RabbitMqService rabbit, IConfiguration configuration,  AppDb db)
         {
             _logger = logger;
             _configuration = configuration;
-            _rabbit = rabbit;
-            _hubContext = hubContext;
+            _rabbit = rabbit;            
             _db = db;
         }
 
         private readonly AppDb _db;
         private readonly IConfiguration _configuration;
         private readonly RabbitMqService _rabbit;
-        private readonly IHubContext<NotificationSignalR> _hubContext;
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
@@ -49,7 +46,7 @@ namespace AdministrationWebApi.Controllers
                 Template = "user_delete"
 
             };
-            _rabbit.SendMessage(eventObj, _configuration["Queue:MAILER"]);
+            _rabbit.SendMessage(eventObj);
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
@@ -59,11 +56,5 @@ namespace AdministrationWebApi.Controllers
             .ToArray();
         }
         
-        [HttpGet("{id}/signal")]
-        public async Task<IActionResult> GetSignalRAsync(string id)
-        {
-            await _hubContext.Clients.Group(id).SendAsync("ReceiveMessage", "message");
-            return Ok();
-        }
     }
 }

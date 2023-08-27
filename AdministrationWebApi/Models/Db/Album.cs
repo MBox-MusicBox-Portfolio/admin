@@ -2,9 +2,8 @@
 
 namespace AdministrationWebApi.Models.Db
 {
-    public class Album
+    public class Album:Entity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime Release { get; set; }
         public string? Info { get; set; }
         public Band? Band { get; set; }

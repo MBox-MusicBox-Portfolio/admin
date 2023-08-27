@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace AdministrationWebApi.Models.Db
 {
-    public class Song
+    public class Song : Entity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        
         [Required]
         public string? Name { get; set; }
         public List<Band> Performer { get; } = new();

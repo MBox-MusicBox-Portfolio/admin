@@ -1,13 +1,10 @@
 ﻿using AdministrationWebApi.Models.Db;
 using AdministrationWebApi.Models.Exceptions;
-using AdministrationWebApi.Models.Presenter;
 using AdministrationWebApi.Models.RequestModels;
 using AdministrationWebApi.Repositories.Database.Interfaces;
 using AdministrationWebApi.Repositories.DataBase.Interfaces;
 using AdministrationWebApi.Services.ActionsMailer;
 using AdministrationWebApi.Services.DataBase;
-using AdministrationWebApi.Services.ResponseHelper.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdministrationWebApi.Repositories.DataBase
@@ -15,15 +12,33 @@ namespace AdministrationWebApi.Repositories.DataBase
     public class NewsService : BaseService<News>, INewsService
     {
 
-        private readonly IActionMailer _mailer;
+        private readonly IActionEventRoute _eventRoute;
         public NewsService(IEntityRepository<News> repository,
-            IActionMailer mailer)
+            IActionEventRoute eventRoute)
             : base(repository)
         {
-            _mailer = mailer;
+            _eventRoute = eventRoute;
         }
 
+        public override async Task<bool> DeleteAsync(Guid id)
+        {
+            var news = await BuildQuery(news => news.Id == id)
+                    .Include(news => news.Member)
+                    .FirstOrDefaultAsync();
+            if (news == null)
+            {
+                return false;
+            }
 
+            var result = await base.DeleteAsync(id);
+
+            if (result)
+            {
+                _ = _eventRoute.NewsDelete(news);
+            }
+
+            return result;
+        }
 
         public async Task<IEnumerable<News>> GetNewsByAuthor(Guid authorId, PaginationInfo pagination)
         {

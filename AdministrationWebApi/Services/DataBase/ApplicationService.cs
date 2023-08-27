@@ -1,8 +1,6 @@
 ﻿using AdministrationWebApi.Models.Db;
-using AdministrationWebApi.Models.RabbitMq;
 using AdministrationWebApi.Models.RequestModels;
 using AdministrationWebApi.Services.RabbitMQ;
-using AdministrationWebApi.Services.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using AdministrationWebApi.Services.DataBase.Interfaces;
 using AdministrationWebApi.Repositories.Database.Interfaces;
@@ -11,6 +9,7 @@ using AdministrationWebApi.Models.Exceptions;
 using AdministrationWebApi.Services.ResponseHelper;
 using AdministrationWebApi.Services.DataBase;
 using System.Linq.Expressions;
+using AdministrationWebApi.Models.RabbitMq;
 
 namespace AdministrationWebApi.Repositories.DataBase
 {
@@ -18,8 +17,7 @@ namespace AdministrationWebApi.Repositories.DataBase
     {
 
         private readonly IConfiguration _configuration;
-        private readonly RabbitMqService _rabbit;
-        private readonly IHubContext<NotificationSignalR> _hubContext;
+        private readonly RabbitMqService _rabbit;       
         private readonly IEntityRepository<StatusApplications> _repositoryStatus;
         private readonly IEntityRepository<User> _repositoryUser;
         private readonly IEntityRepository<Band> _repositoryBand;
@@ -28,8 +26,7 @@ namespace AdministrationWebApi.Repositories.DataBase
 
 
         public ApplicationService(RabbitMqService rabbit,
-            IConfiguration configuration,
-            IHubContext<NotificationSignalR> hubContext,
+            IConfiguration configuration,      
             IEntityRepository<Applications> app,
             IEntityRepository<StatusApplications> repositoryStatus,
             IEntityRepository<User> repositoryUser,
@@ -38,8 +35,7 @@ namespace AdministrationWebApi.Repositories.DataBase
             IEntityRepository<Role> repositoryRole)
             : base(app)
         {
-            _rabbit = rabbit;
-            _hubContext = hubContext;
+            _rabbit = rabbit;            
             _configuration = configuration;
             _repositoryStatus = repositoryStatus;
             _repositoryUser = repositoryUser;
@@ -76,7 +72,7 @@ namespace AdministrationWebApi.Repositories.DataBase
                 application.Admin = admin;
                 application.MessageCreated = entity.Message;
                 application.ChangedStatus = DateTime.Now;
-                if (newStatus.Name == "accepted")
+                if (newStatus?.Name == "accepted")
                 {
                     var band = CreateBandWithApplication(application);
                     await _repositoryBand.AddAsync(band);
@@ -88,15 +84,13 @@ namespace AdministrationWebApi.Repositories.DataBase
                 throw new BadRequestException("The server error occurred");
             }
 
-            //var msg = new SendObject()
-            //{
-            //    Email = application.Producer?.Email,
-            //    Template = "application_change_status_mail", //change_status_application_mail
-            //    Name = application.Producer?.Name,
-            //    Body = new { Status = application.Status.Name }
-            //};
-            //_rabbit.SendMessage(msg, _configuration["Queue:MAILER"]);
-            await _hubContext.Clients.Group(application.Producer.Id.ToString()).SendAsync("ReceiveMessage", "change_status_applicaction");
+            var msg = new EventRoute()
+            {
+                To = application.Producer?.Id.ToString(),
+                Template = "application_change_status_mail", 
+                Body = new { Email = application.Producer?.Email, Status = application.Status.Name, Name = application.Producer?.Name }
+            };
+            _rabbit.SendMessage(msg);
             return application;
         }
 

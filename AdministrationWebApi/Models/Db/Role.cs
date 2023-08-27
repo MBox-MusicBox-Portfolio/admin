@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 namespace AdministrationWebApi.Models.Db
 {
     [Index(nameof(Name), IsUnique = true)]
-    public class Role
+    public class Role : Entity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        
         [Required]
         public string? Name { get; set; }    
     }

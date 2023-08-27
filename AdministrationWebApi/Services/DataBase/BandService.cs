@@ -14,12 +14,12 @@ namespace AdministrationWebApi.Repositories.DataBase
 {
     public class BandService : BaseService<Band>, IBandService
     {
-        private readonly IActionMailer _mailer;
+        private readonly IActionEventRoute _eventRoute;
         private readonly IConfiguration _configuration;      
         private readonly IEntityRepository<User> _repositoryUser;
         private readonly IEntityRepository<MemberBand> _repositoryMember;
         private readonly IEntityRepository<Role> _repositoryRole;
-        public BandService(IActionMailer mailer,
+        public BandService(IActionEventRoute mailer,
             IConfiguration configuration,
             IResponseHelper response,
             IEntityRepository<Band> repository,
@@ -28,7 +28,7 @@ namespace AdministrationWebApi.Repositories.DataBase
             IEntityRepository<Role> repositoryRole)
             : base(repository)
         {
-            _mailer = mailer;
+            _eventRoute = mailer;
             _configuration = configuration;            
             _repositoryUser = repositoryUser;
             _repositoryMember = repositoryMember;
@@ -39,9 +39,10 @@ namespace AdministrationWebApi.Repositories.DataBase
         {
             var band = await GetByIdAsync(id);
             var isResult = await base.DeleteAsync(id);
-            await _mailer.BandAction(band, _configuration["TemplatePages:DELETE_BAND"]);
+            await _eventRoute.BandAction(band, _configuration["TemplatePages:DELETE_BAND"]);
             return isResult;
         }
+
         public async Task<Band> AddMemberToBandAsync(Guid id, Guid memberId)
         {
             var band = await BuildQuery().Include(b => b.Members).FirstOrDefaultAsync(b => b.Id == id);
@@ -71,6 +72,7 @@ namespace AdministrationWebApi.Repositories.DataBase
                     {
                         User = newMember
                     };
+                    _eventRoute.UserAction(newMember, _configuration["TemplatePages: USER_CHANGE_ROLE"]);
                     await _repositoryMember.AddAsync(tmpMember);
                 }
                 band.Members.Add(tmpMember);
@@ -96,7 +98,7 @@ namespace AdministrationWebApi.Repositories.DataBase
 
             band.IsBlocked = true;
             await UpdateAsync(band);
-            _ = _mailer.BandAction(band, _configuration["TemplatePages:BLOCK_BAND"]);
+            _ = _eventRoute.BandAction(band, _configuration["TemplatePages:BLOCK_BAND"]);
             return band.IsBlocked;
         }
 
@@ -113,7 +115,7 @@ namespace AdministrationWebApi.Repositories.DataBase
             }
             band.IsBlocked = false;
             await UpdateAsync(band);
-            await _mailer.BandAction(band, _configuration["TemplatePages:UNBLOCK_BAND"]);
+            await _eventRoute.BandAction(band, _configuration["TemplatePages:UNBLOCK_BAND"]);
             return band.IsBlocked;
         }
 

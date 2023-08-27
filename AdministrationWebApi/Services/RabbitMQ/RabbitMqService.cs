@@ -7,11 +7,19 @@ namespace AdministrationWebApi.Services.RabbitMQ
     public class RabbitMqService
     {
         private readonly IConnection _connection;
-
-        public RabbitMqService(IConnection connection)
+        private readonly IConfiguration _configuration;
+        private readonly string? _queue;
+        public RabbitMqService(IConnection connection, IConfiguration configuration)
         {
             _connection = connection;
+            _configuration = configuration;
+            _queue = "queue_event";
         }
+        public void SendMessage(object message)
+        {           
+            SendMessage(message, _queue);
+        }
+
         public void SendMessage(object obj, string? queue)
         {
             if (queue == null)

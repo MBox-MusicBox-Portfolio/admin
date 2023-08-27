@@ -2,7 +2,7 @@
 
 namespace AdministrationWebApi.Services.ActionsMailer
 {
-    public interface IActionMailer
+    public interface IActionEventRoute
     {
         Task NewsDelete(News news);
         Task SongAction(Song song, string? template);

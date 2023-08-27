@@ -1,8 +1,6 @@
 ﻿using AdministrationWebApi.Models.Db;
-using AdministrationWebApi.Models.Presenter;
 using AdministrationWebApi.Models.RequestModels;
 using AdministrationWebApi.Services.DataBase.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AdministrationWebApi.Repositories.DataBase.Interfaces
 {

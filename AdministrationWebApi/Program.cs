@@ -12,7 +12,6 @@ using AdministrationWebApi.Services.RabbitMQ;
 using AdministrationWebApi.Services.ResponseHelper;
 using AdministrationWebApi.Services.ResponseHelper.Interfaces;
 using AdministrationWebApi.Services.SeedDB;
-using AdministrationWebApi.Services.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -33,14 +32,12 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
-builder.Services.AddSignalR();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
@@ -56,14 +53,14 @@ builder.Services.AddSingleton<RabbitMqService>(sp =>
         Password = builder.Configuration["RabbitMQ:PASSWORD"],
         Ssl = {Enabled=false}
     };
-
+    var configuration = sp.GetRequiredService<IConfiguration>();
     var connection = connectionFactory.CreateConnection();
-    return new RabbitMqService(connection);
+    return new RabbitMqService(connection, configuration);
 });
 
 
 // services
-builder.Services.AddScoped<IActionMailer, ActionMailer>();
+builder.Services.AddScoped<IActionEventRoute, ActionEventRoute>();
 
 builder.Services.AddScoped<IAppllicationsService, ApplicationService>();
 builder.Services.AddScoped<IBlacklistService, BlacklistService>();
@@ -76,6 +73,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 //TO DO
 builder.Services.AddScoped< IByOneMethod< Album>, AlbumService>();
 builder.Services.AddScoped<IByOneMethod<MemberBand>, MemberBandService>();
+builder.Services.AddScoped<IByOneMethod<Producer>, ProducerService>();
 builder.Services.AddScoped<IBaseService<StatusApplications>, BaseService<StatusApplications>>();
 builder.Services.AddScoped<IBaseService<Role>, BaseService<Role>>();
 
@@ -108,7 +106,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseForwardedHeaders();
-app.MapHub<NotificationSignalR>("/api/admin/notificationhub");
 app.UseCors(builder => builder
     .AllowAnyMethod()
     .AllowAnyHeader()
