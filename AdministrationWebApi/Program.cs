@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +26,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MusicBox API", Version = "v1" });
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+});
 var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDb>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -51,7 +56,7 @@ builder.Services.AddSingleton<RabbitMqService>(sp =>
 
         UserName = builder.Configuration["RabbitMQ:USER_NAME"],
         Password = builder.Configuration["RabbitMQ:PASSWORD"],
-        Ssl = {Enabled=false}
+        Ssl = { Enabled = false }
     };
     var configuration = sp.GetRequiredService<IConfiguration>();
     var connection = connectionFactory.CreateConnection();
@@ -71,7 +76,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 
 //TO DO
-builder.Services.AddScoped< IByOneMethod< Album>, AlbumService>();
+builder.Services.AddScoped<IByOneMethod<Album>, AlbumService>();
 builder.Services.AddScoped<IByOneMethod<MemberBand>, MemberBandService>();
 builder.Services.AddScoped<IByOneMethod<Producer>, ProducerService>();
 builder.Services.AddScoped<IBaseService<StatusApplications>, BaseService<StatusApplications>>();
@@ -100,11 +105,17 @@ builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 var app = builder.Build();
-if (app.Environment.IsDevelopment())
+
+app.UseSwagger(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.RouteTemplate = "api/admin/swagger/{documentName}/swagger.json";
+});
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/api/admin/swagger/v1/swagger.json", "MusicBox API");
+    c.RoutePrefix = "api/admin/swagger";
+});
+
 app.UseForwardedHeaders();
 app.UseCors(builder => builder
     .AllowAnyMethod()

@@ -1,5 +1,6 @@
 ﻿using AdministrationWebApi.Models.Db;
 using AdministrationWebApi.Models.Presenter;
+using AdministrationWebApi.Models.RequestModels;
 using AdministrationWebApi.Services.DataBase.Interfaces;
 using AdministrationWebApi.Services.ResponseHelper.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,19 @@ namespace AdministrationWebApi.Controllers
             }
         }
 
-        //protected override object GetPresent(User entity) => new UserPresenter(entity);
+        // GET: api/admin/users/{id}/role
+        [HttpGet("{id}/role")]
+        public async Task<ActionResult<ResponsePresenter>> GetByRoleAsync(Guid id, [FromQuery] PaginationInfo pagination)
+        {
+            try
+            {
+                IEnumerable<User> items = await _serviceUser.GetByRoleAsync(id, pagination);
+                return _response.Ok(GetPresentCollection(items));
+            }
+            catch (Exception ex)
+            {
+                return _response.HandleError(ex);
+            }
+        }
     }
 }

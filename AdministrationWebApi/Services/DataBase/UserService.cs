@@ -1,10 +1,12 @@
 ﻿using AdministrationWebApi.Models.Db;
 using AdministrationWebApi.Models.Exceptions;
+using AdministrationWebApi.Models.RequestModels;
 using AdministrationWebApi.Repositories.Database.Interfaces;
 using AdministrationWebApi.Services.ActionsMailer;
 using AdministrationWebApi.Services.DataBase;
 using AdministrationWebApi.Services.DataBase.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace AdministrationWebApi.Repositories.DataBase
 {
@@ -69,10 +71,18 @@ namespace AdministrationWebApi.Repositories.DataBase
             await _eventRoute.UserAction(user, _configuration["TemplatePages:USER_CHANGE_ROLE"]);
             return true;
         }
+
+        public async Task<IEnumerable<User>> GetByRoleAsync(Guid id, PaginationInfo pagination)
+        {
+            Expression<Func<User, bool>> filter = app => app.Role.Id == id;
+            return await BuildQuery(filter, pagination).ToListAsync();
+        }
+
         private async Task<User?> GetUserByidAsync(Guid id)
         {
             return await BuildQuery().FirstOrDefaultAsync(x => x.Id == id);
         }
+
     }
 
 }
