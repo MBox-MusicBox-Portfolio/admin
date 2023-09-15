@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AdministrationWebApi.Repositories.Database
 {
-    public class BaseRepository<TEntity> : IEntityRepository<TEntity> where TEntity : Entity
+    public abstract class  BaseRepository<TEntity> : IEntityRepository<TEntity> where TEntity : Entity
     {
         protected readonly AppDb _context;
 
@@ -16,7 +16,7 @@ namespace AdministrationWebApi.Repositories.Database
 
         public  async Task<TEntity> GetByIdAsync(Guid id)
         {
-            return await BuildQuery().FirstOrDefaultAsync(entity=>entity.Id==id);
+            return await BuildQuery().FirstOrDefaultAsync(entity => entity.Id == id);
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(PaginationInfo pagination)

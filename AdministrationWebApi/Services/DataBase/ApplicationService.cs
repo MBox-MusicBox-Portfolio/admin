@@ -1,7 +1,6 @@
 ﻿using AdministrationWebApi.Models.Db;
 using AdministrationWebApi.Models.RequestModels;
 using AdministrationWebApi.Services.RabbitMQ;
-using Microsoft.AspNetCore.SignalR;
 using AdministrationWebApi.Services.DataBase.Interfaces;
 using AdministrationWebApi.Repositories.Database.Interfaces;
 using Microsoft.EntityFrameworkCore;

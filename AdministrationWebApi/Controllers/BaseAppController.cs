@@ -22,6 +22,7 @@ namespace AdministrationWebApi.Controllers
         {
             try
             {
+
                 IEnumerable<TEntity> items = await _service.GetAllAsync(pagination);
                 return _response.Ok(GetPresentCollection(items));
             }

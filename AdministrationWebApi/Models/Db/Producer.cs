@@ -5,7 +5,6 @@ namespace AdministrationWebApi.Models.Db
 {
     public class Producer : Entity
     {
-      
         [Required]
         public User User { get; set; }
         [Required]

@@ -1,16 +1,14 @@
 ﻿using AdministrationWebApi.Models.Db;
 using AdministrationWebApi.Services.DataBase.Interfaces;
 using AdministrationWebApi.Services.ResponseHelper.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdministrationWebApi.Controllers
 {
-    [Route("api/admin/role")]
     [ApiController]
-    
-    public class RoleController : BaseAppController<Role>
+    [Route("api/admin/genre")]
+    public class GenreController : BaseAppController<Genre>
     {
-        public RoleController(IResponseHelper response, IBaseService<Role> service) : base(response, service) { }
+        public GenreController(IResponseHelper response, IBaseService<Genre> service) : base(response, service) { }
     }
 }

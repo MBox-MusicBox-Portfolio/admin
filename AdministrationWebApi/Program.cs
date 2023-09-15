@@ -8,6 +8,7 @@ using AdministrationWebApi.Repositories.DataBase.Interfaces;
 using AdministrationWebApi.Services.ActionsMailer;
 using AdministrationWebApi.Services.DataBase;
 using AdministrationWebApi.Services.DataBase.Interfaces;
+using AdministrationWebApi.Services.Middleware;
 using AdministrationWebApi.Services.RabbitMQ;
 using AdministrationWebApi.Services.ResponseHelper;
 using AdministrationWebApi.Services.ResponseHelper.Interfaces;
@@ -37,15 +38,25 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+//options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+//}
+builder.Services.AddAuthentication()
+.AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            ClockSkew = TimeSpan.Zero,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            ValidateIssuer = true,
+            ValidIssuer = "config.issuer",
+            ValidateAudience = true,
+            ValidAudience = "config.audience",
+            ValidateLifetime = true,
         };
     });
 builder.Services.AddSingleton<RabbitMqService>(sp =>
@@ -81,6 +92,7 @@ builder.Services.AddScoped<IByOneMethod<MemberBand>, MemberBandService>();
 builder.Services.AddScoped<IByOneMethod<Producer>, ProducerService>();
 builder.Services.AddScoped<IBaseService<StatusApplications>, BaseService<StatusApplications>>();
 builder.Services.AddScoped<IBaseService<Role>, BaseService<Role>>();
+builder.Services.AddScoped<IBaseService<Genre>, BaseService<Genre>>();
 
 
 
@@ -123,7 +135,7 @@ app.UseCors(builder => builder
     .AllowCredentials());
 
 Seed(app);
-
+app.UseMiddleware<CustomAuthorizationMiddleware>();
 app.UseAuthentication();
 
 app.UseAuthorization();

@@ -9,11 +9,12 @@ namespace AdministrationWebApi.Repositories.Database
         public override IQueryable<Band> BuildQuery()
         {
             return _context.Bands
-                .Include(app => app.Producer)
-                .Include(app => app.Songs)
-                .Include(app => app.Followers)
-                .Include(app => app.Members)
-                .Include(app => app.Albums);
+                .Include(band => band.Producer)
+                .Include(band => band.Songs)
+                .Include(band => band.Followers)
+                .Include(band => band.Members)
+                .Include(band => band.Albums)
+                .Include(band => band.Genres);
         }
     }
 }

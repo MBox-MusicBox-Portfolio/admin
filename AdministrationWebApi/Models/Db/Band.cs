@@ -22,6 +22,8 @@ namespace AdministrationWebApi.Models.Db
         public string? FullInfo { get; set; }
         [JsonIgnore]
         public List<User>? Followers {get; set; } = new();
+        [JsonIgnore]
+        public List<Genre>? Genres { get; set; } = new();
         public bool IsBlocked { get; set; } = false;
     }
 }

@@ -2,19 +2,19 @@ using AdministrationWebApi.Models.Db;
 using Microsoft.AspNetCore.Mvc;
 using AdministrationWebApi.Models.RabbitMq;
 using AdministrationWebApi.Services.RabbitMQ;
-using Microsoft.AspNetCore.SignalR;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace AdministrationWebApi.Controllers
 {
     [ApiController]
-    [Route("/api/admin/[controller]")]
+    [Route("/api/admin/test")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
-        
+    
         private readonly ILogger<WeatherForecastController> _logger;
 
         public WeatherForecastController(ILogger<WeatherForecastController> logger, RabbitMqService rabbit, IConfiguration configuration,  AppDb db)
@@ -23,6 +23,7 @@ namespace AdministrationWebApi.Controllers
             _configuration = configuration;
             _rabbit = rabbit;            
             _db = db;
+            
         }
 
         private readonly AppDb _db;
@@ -30,23 +31,38 @@ namespace AdministrationWebApi.Controllers
         private readonly RabbitMqService _rabbit;
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IEnumerable<WeatherForecast>> GetAsync()
         {
-            var id = Guid.NewGuid();
+            var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
-            var eventObj = new EventRoute()
+            if (token != null)
             {
-                From = ": string | null",
-                Body = new
+                try
                 {
-                    Email = "victorgolova@gmail.com",
-                    Template = "user_delete",
-                    Name = "my name",
-                },
-                Template = "user_delete"
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var tokenS = tokenHandler.ReadJwtToken(token);
 
-            };
-            _rabbit.SendMessage(eventObj);
+                    if (tokenS.Claims.Any(claim => claim.Type == "Role" && claim.Value == "super_admin"))
+                    {
+                        var eventObj = new EventRoute()
+                        {
+                            From = ": string | null",
+                            Body = new
+                            {
+                                Email = "victorgolova@gmail.com",
+                                Template = "user_delete",
+                                Name = "my name",
+                            },
+                            Template = "user_delete"
+
+                        };
+                        _rabbit.SendMessage(eventObj);                        
+                    }
+                }
+                catch (Exception)
+                { }
+            }
+                        
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),

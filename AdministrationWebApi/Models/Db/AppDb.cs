@@ -17,7 +17,8 @@ namespace AdministrationWebApi.Models.Db
         public DbSet<Applications> Applications { get; set; }
         public DbSet<StatusApplications> StatusApplications { get; set; }
         public DbSet<BlacklistUser> Blacklists { get; set; }
-
+        public DbSet<SocialUserCredential> SocialUserCredentials { get; set; }
+        public DbSet<Genre> Genres { get; set; }
         public AppDb(DbContextOptions<AppDb> options)
             : base(options) => Database.EnsureCreated();
     }

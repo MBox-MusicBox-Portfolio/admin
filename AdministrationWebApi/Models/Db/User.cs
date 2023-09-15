@@ -20,6 +20,8 @@ namespace AdministrationWebApi.Models.Db
         public Role? Role { get; set; }
         [JsonIgnore]
         public List<Band>? FollowingsBands { get; set; } = new();
+        [JsonIgnore]
+        public List<SocialUserCredential>? SocialUserCredentials { get; set; } = new();
         [Required]
         [JsonIgnore]
         public string? Password { get; set; }

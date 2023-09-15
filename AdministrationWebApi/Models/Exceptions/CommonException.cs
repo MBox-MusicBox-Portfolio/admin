@@ -1,6 +1,4 @@
-﻿using AdministrationWebApi.Models.Presenter;
-
-namespace AdministrationWebApi.Models.Exceptions
+﻿namespace AdministrationWebApi.Models.Exceptions
 {
     public class CommonException:Exception
     {
