@@ -5,10 +5,11 @@ namespace AdministrationWebApi.Services.Middleware
     public class CustomAuthorizationMiddleware
     {
         private readonly RequestDelegate _next;
-
-        public CustomAuthorizationMiddleware(RequestDelegate next)
+        private readonly ILogger<CustomAuthorizationMiddleware> _logger;
+        public CustomAuthorizationMiddleware(RequestDelegate next, ILogger<CustomAuthorizationMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -22,15 +23,18 @@ namespace AdministrationWebApi.Services.Middleware
                 {
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var tokenS = tokenHandler.ReadJwtToken(token);
-
-                    if (tokenS.Claims.Any(claim => claim.Type == "Role" && (claim.Value == "admin" || claim.Value == "super_admin")))
-                    {                  
+                    var userRoleClaim = tokenS.Claims.FirstOrDefault(claim => claim.Type == "Role");
+                    if (userRoleClaim != null && (userRoleClaim.Value == "admin" || userRoleClaim.Value == "super_admin"))
+                    {
+                        context.Items["IsSuperAdmin"] = (userRoleClaim.Value == "super_admin");
                         await _next(context);
                         return;
                     }
                 }
-                catch (Exception)
-                {}
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occurred in CustomAuthorizationMiddleware");
+                }
             }
 
             context.Response.StatusCode = 401; // Unauthorized

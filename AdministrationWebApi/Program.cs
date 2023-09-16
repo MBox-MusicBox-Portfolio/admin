@@ -8,6 +8,7 @@ using AdministrationWebApi.Repositories.DataBase.Interfaces;
 using AdministrationWebApi.Services.ActionsMailer;
 using AdministrationWebApi.Services.DataBase;
 using AdministrationWebApi.Services.DataBase.Interfaces;
+using AdministrationWebApi.Services.ForAdmin;
 using AdministrationWebApi.Services.Middleware;
 using AdministrationWebApi.Services.RabbitMQ;
 using AdministrationWebApi.Services.ResponseHelper;
@@ -38,12 +39,6 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
-//options =>
-//{
-//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-//}
 builder.Services.AddAuthentication()
 .AddJwtBearer(options =>
     {
@@ -77,6 +72,7 @@ builder.Services.AddSingleton<RabbitMqService>(sp =>
 
 // services
 builder.Services.AddScoped<IActionEventRoute, ActionEventRoute>();
+builder.Services.AddScoped<IAdminUserRoleService, AdminUserRoleService>();
 
 builder.Services.AddScoped<IAppllicationsService, ApplicationService>();
 builder.Services.AddScoped<IBlacklistService, BlacklistService>();

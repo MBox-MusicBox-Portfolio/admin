@@ -72,7 +72,7 @@ namespace AdministrationWebApi.Repositories.DataBase
                     {
                         User = newMember
                     };
-                    _eventRoute.UserAction(newMember, _configuration["TemplatePages: USER_CHANGE_ROLE"]);
+                    await _eventRoute.UserAction(newMember, _configuration["TemplatePages: USER_CHANGE_ROLE"]);
                     await _repositoryMember.AddAsync(tmpMember);
                 }
                 band.Members.Add(tmpMember);

@@ -2,6 +2,7 @@
 using AdministrationWebApi.Models.RequestModels;
 using AdministrationWebApi.Repositories.Database.Interfaces;
 using AdministrationWebApi.Services.DataBase.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace AdministrationWebApi.Services.DataBase
@@ -27,11 +28,12 @@ namespace AdministrationWebApi.Services.DataBase
         {
             var applications = BuildQuery()
                 .Where(filter)
-                .Skip((pagination.PageIndex - 1) * pagination.PageSize)
-                .Take(pagination.PageSize);
+                .Skip((pagination.Page - 1) * pagination.Size)
+                .Take(pagination.Size);
 
             return applications;
         }
+      
         public IQueryable<TEntity> BuildQuery(Expression<Func<TEntity, bool>> filter)
         {
             var applications = BuildQuery()

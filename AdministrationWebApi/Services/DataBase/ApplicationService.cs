@@ -16,7 +16,7 @@ namespace AdministrationWebApi.Repositories.DataBase
     {
 
         private readonly IConfiguration _configuration;
-        private readonly RabbitMqService _rabbit;       
+        private readonly RabbitMqService _rabbit;
         private readonly IEntityRepository<StatusApplications> _repositoryStatus;
         private readonly IEntityRepository<User> _repositoryUser;
         private readonly IEntityRepository<Band> _repositoryBand;
@@ -25,7 +25,7 @@ namespace AdministrationWebApi.Repositories.DataBase
 
 
         public ApplicationService(RabbitMqService rabbit,
-            IConfiguration configuration,      
+            IConfiguration configuration,
             IEntityRepository<Applications> app,
             IEntityRepository<StatusApplications> repositoryStatus,
             IEntityRepository<User> repositoryUser,
@@ -34,7 +34,7 @@ namespace AdministrationWebApi.Repositories.DataBase
             IEntityRepository<Role> repositoryRole)
             : base(app)
         {
-            _rabbit = rabbit;            
+            _rabbit = rabbit;
             _configuration = configuration;
             _repositoryStatus = repositoryStatus;
             _repositoryUser = repositoryUser;
@@ -56,7 +56,7 @@ namespace AdministrationWebApi.Repositories.DataBase
             {
                 errors.Add(ResponseHelper.CreateObjectError("Status", "Not found Status"));
             }
-            var admin = await _repositoryUser.BuildQuery().FirstOrDefaultAsync(u => u.Id == entity.IdAdmin && (u.Role.Name == "admin" || u.Role.Name == "super_admin"));
+            var admin = await _repositoryUser.BuildQuery().FirstOrDefaultAsync(u => u.Id == entity.IdAdmin && (u.Role != null && u.Role.Name == "admin" || u.Role.Name == "super_admin"));
             if (admin == null)
             {
                 errors.Add(ResponseHelper.CreateObjectError("Admin", "Not found Admin"));
@@ -86,8 +86,8 @@ namespace AdministrationWebApi.Repositories.DataBase
             var msg = new EventRoute()
             {
                 To = application.Producer?.Id.ToString(),
-                Template = "application_change_status_mail", 
-                Body = new { Email = application.Producer?.Email, Status = application.Status.Name, Name = application.Producer?.Name }
+                Template = "application_change_status_mail",
+                Body = new { Email = application.Producer?.Email, Status = application.Status?.Name, Name = application.Producer?.Name }
             };
             _rabbit.SendMessage(msg);
             return application;
@@ -95,19 +95,19 @@ namespace AdministrationWebApi.Repositories.DataBase
 
         public async Task<IEnumerable<Applications>> GetByAdminAsync(Guid id, PaginationInfo pagination)
         {
-            Expression<Func<Applications, bool>> filter = app => app.Admin.Id == id;
+            Expression<Func<Applications, bool>> filter = app => app.Admin != null && app.Admin.Id == id;
             return await BuildQuery(filter, pagination).ToListAsync();
         }
 
         public async Task<IEnumerable<Applications>> GetByStatusAsync(Guid id, PaginationInfo pagination)
         {
-            Expression<Func<Applications, bool>> filter = app => app.Status.Id == id;
+            Expression<Func<Applications, bool>> filter = app => app.Status != null && app.Status.Id == id;
             return await BuildQuery(filter, pagination).ToListAsync();
         }
 
         public async Task<IEnumerable<Applications>> GetByUserAsync(Guid id, PaginationInfo pagination)
         {
-            Expression<Func<Applications, bool>> filter = app => app.Producer.Id == id;
+            Expression<Func<Applications, bool>> filter = app => app.Producer != null && app.Producer.Id == id;
             return await BuildQuery(filter, pagination).ToListAsync();
         }
 

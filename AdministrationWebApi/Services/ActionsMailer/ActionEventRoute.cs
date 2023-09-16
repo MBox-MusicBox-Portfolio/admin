@@ -20,7 +20,7 @@ namespace AdministrationWebApi.Services.ActionsMailer
             var msg = new EventRoute()
             {
                 To = news.Member?.User?.Id.ToString(),
-                Template = _configuration["TemplatePages:DELETE_NEWS"],
+                Template = _configuration["TemplatePages:DELETE_NEWS"]??"",
                 Body = new { Text = news.Text, Email = news.Member?.User?.Email, }
             };
             _rabbit.SendMessage(msg);
@@ -35,7 +35,7 @@ namespace AdministrationWebApi.Services.ActionsMailer
                 {
                     To = band?.Producer?.User?.Id.ToString(),
                     Template = template,
-                    Body = new { Email = band?.Producer?.User?.Email, Band = band.Name, Name = song.Name }
+                    Body = new { Email = band?.Producer?.User?.Email, Band = band?.Name, Name = song.Name }
                 };
                 _rabbit.SendMessage(msg);               
             }
@@ -59,7 +59,7 @@ namespace AdministrationWebApi.Services.ActionsMailer
                     {
                         To = band?.Producer?.User?.Id.ToString(),
                         Template = template,
-                        Body = new { Email = member?.User?.Email, Band = band.Name }
+                        Body = new { Email = member?.User?.Email, Band = band?.Name }
                     };                
                     _rabbit.SendMessage(msgMembers);
                 }

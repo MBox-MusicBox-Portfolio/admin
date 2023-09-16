@@ -2,6 +2,7 @@
 using AdministrationWebApi.Models.Presenter;
 using AdministrationWebApi.Models.RequestModels;
 using AdministrationWebApi.Services.DataBase.Interfaces;
+using AdministrationWebApi.Services.ForAdmin;
 using AdministrationWebApi.Services.ResponseHelper.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,22 @@ namespace AdministrationWebApi.Controllers
     [Route("api/admin/users")]
     public class UserController : BaseAppController<User>
     {
-        private readonly IUserService _serviceUser;       
-        public UserController(IUserService service, IResponseHelper response):base(response,service) 
+        private readonly IUserService _serviceUser;
+        private readonly AdminUserRoleService _adminUserRoleService;
+        public UserController(IUserService service, IResponseHelper response, AdminUserRoleService adminUserRoleService):base(response,service) 
         {
-            _serviceUser = service;           
+            _serviceUser = service;     
+            _adminUserRoleService = adminUserRoleService;
+        }
+
+        [HttpGet("pagination")]
+        public override Task<ActionResult<ResponsePresenter>> GetAllAsync([FromQuery] PaginationInfo pagination)
+        {
+            var isSuperAdmin = HttpContext.Items["IsSuperAdmin"] as bool?;
+            if (isSuperAdmin.HasValue && isSuperAdmin.Value)
+                return base.GetAllAsync(pagination);
+            else
+                return _adminUserRoleService.GetAllUserAsync(pagination);
         }
 
         // POST: api/admin/users/{id}/changerole

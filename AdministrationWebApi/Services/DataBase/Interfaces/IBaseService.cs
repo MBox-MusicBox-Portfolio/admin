@@ -1,4 +1,5 @@
 ﻿using AdministrationWebApi.Models.RequestModels;
+using System.Linq.Expressions;
 
 namespace AdministrationWebApi.Services.DataBase.Interfaces
 {
@@ -16,6 +17,7 @@ namespace AdministrationWebApi.Services.DataBase.Interfaces
         /// </summary>
         /// <returns></returns>
         IQueryable<TEntity> BuildQuery();
+        IQueryable<TEntity> BuildQuery(Expression<Func<TEntity, bool>> filter, PaginationInfo pagination);
     }
 
 

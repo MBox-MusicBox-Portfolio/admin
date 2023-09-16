@@ -1,5 +1,6 @@
 ﻿using AdministrationWebApi.Models.Db;
 using AdministrationWebApi.Models.RequestModels;
+using System.Linq.Expressions;
 
 namespace AdministrationWebApi.Repositories.Database.Interfaces
 {
@@ -17,6 +18,6 @@ namespace AdministrationWebApi.Repositories.Database.Interfaces
         /// </summary>
         /// <returns></returns>
         IQueryable<TEntity> BuildQuery();
-        
+       
     }
 }

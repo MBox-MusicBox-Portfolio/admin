@@ -18,11 +18,10 @@ namespace AdministrationWebApi.Controllers
         }
 
         [HttpGet("pagination")]
-        public async Task<ActionResult<ResponsePresenter>> GetAllAsync([FromQuery] PaginationInfo pagination)
+        public virtual async Task<ActionResult<ResponsePresenter>> GetAllAsync([FromQuery] PaginationInfo pagination)
         {
             try
             {
-
                 IEnumerable<TEntity> items = await _service.GetAllAsync(pagination);
                 return _response.Ok(GetPresentCollection(items));
             }
