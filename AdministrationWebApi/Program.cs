@@ -105,6 +105,7 @@ builder.Services.AddScoped<IEntityRepository<Role>, RoleRepository>();
 builder.Services.AddScoped<IEntityRepository<Song>, SongRepository>();
 builder.Services.AddScoped<IEntityRepository<StatusApplications>, StatusApplicationsRepository>();
 builder.Services.AddScoped<IEntityRepository<User>, UserRepository>();
+builder.Services.AddScoped<IEntityRepository<Genre>, GenreRepository>();
 
 
 builder.Services.AddScoped<IResponseHelper, ResponseHelper>();
