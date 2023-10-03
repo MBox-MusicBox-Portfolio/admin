@@ -14,11 +14,9 @@ namespace AdministrationWebApi.Models.Db
         public string? Link { get; set; }
         public Genre? Genre { get; set; }
         public string? Text { get; set; }
-        public string? Info { get; set; }        
+        public string? Description { get; set; }        
         public bool IsBlock { get; set; } = false;
         [JsonIgnore]
         public List<Album> Albums { get; set; } = new();
-        [JsonIgnore]
-        public List<Playlist> Playlists { get; } = new();
     }
 }

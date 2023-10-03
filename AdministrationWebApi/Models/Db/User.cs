@@ -21,7 +21,7 @@ namespace AdministrationWebApi.Models.Db
         [JsonIgnore]
         public List<Band>? FollowingsBands { get; set; } = new();
         [JsonIgnore]
-        public List<SocialUserCredential>? SocialUserCredentials { get; set; } = new();
+        public Playlist? UserLibrary { get; set; } 
         [Required]
         [JsonIgnore]
         public string? Password { get; set; }

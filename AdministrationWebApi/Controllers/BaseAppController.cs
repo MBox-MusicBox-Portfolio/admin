@@ -90,6 +90,7 @@ namespace AdministrationWebApi.Controllers
                 return _response.HandleError(ex);
             }
         }
+
         protected virtual object GetPresent(TEntity entity) => entity;
         protected virtual IEnumerable<object> GetPresentCollection(IEnumerable<TEntity>  entity)
         {
