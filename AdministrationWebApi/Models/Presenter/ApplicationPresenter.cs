@@ -14,7 +14,7 @@ namespace AdministrationWebApi.Models.Presenter
         public CommonPresenter? Status { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? ChangedStatus { get; set; }
-        public ApplicationPresenter(Applications applications)
+        public ApplicationPresenter(Application applications)
         {
             Id= applications.Id;
             BandName= applications.BandName;

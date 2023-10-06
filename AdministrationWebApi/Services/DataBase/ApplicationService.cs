@@ -12,7 +12,7 @@ using AdministrationWebApi.Models.RabbitMq;
 
 namespace AdministrationWebApi.Repositories.DataBase
 {
-    public class ApplicationService : BaseService<Applications>, IAppllicationsService
+    public class ApplicationService : BaseService<Application>, IAppllicationsService
     {
 
         private readonly IConfiguration _configuration;
@@ -26,7 +26,7 @@ namespace AdministrationWebApi.Repositories.DataBase
 
         public ApplicationService(RabbitMqService rabbit,
             IConfiguration configuration,
-            IEntityRepository<Applications> app,
+            IEntityRepository<Application> app,
             IEntityRepository<StatusApplications> repositoryStatus,
             IEntityRepository<User> repositoryUser,
             IEntityRepository<Band> repositoryBand,
@@ -43,7 +43,7 @@ namespace AdministrationWebApi.Repositories.DataBase
             _repositoryRole = repositoryRole;
         }
 
-        public async Task<Applications> ChangeStatusApplicationsAsync(Guid id, CommonRequst entity)
+        public async Task<Application> ChangeStatusApplicationsAsync(Guid id, CommonRequst entity)
         {
             var application = await BuildQuery().FirstOrDefaultAsync(app => app.Id == id);
             List<object> errors = new();
@@ -93,25 +93,25 @@ namespace AdministrationWebApi.Repositories.DataBase
             return application;
         }
 
-        public async Task<IEnumerable<Applications>> GetByAdminAsync(Guid id, PaginationInfo pagination)
+        public async Task<IEnumerable<Application>> GetByAdminAsync(Guid id, PaginationInfo pagination)
         {
-            Expression<Func<Applications, bool>> filter = app => app.Admin != null && app.Admin.Id == id;
+            Expression<Func<Application, bool>> filter = app => app.Admin != null && app.Admin.Id == id;
             return await BuildQuery(filter, pagination).ToListAsync();
         }
 
-        public async Task<IEnumerable<Applications>> GetByStatusAsync(Guid id, PaginationInfo pagination)
+        public async Task<IEnumerable<Application>> GetByStatusAsync(Guid id, PaginationInfo pagination)
         {
-            Expression<Func<Applications, bool>> filter = app => app.Status != null && app.Status.Id == id;
+            Expression<Func<Application, bool>> filter = app => app.Status != null && app.Status.Id == id;
             return await BuildQuery(filter, pagination).ToListAsync();
         }
 
-        public async Task<IEnumerable<Applications>> GetByUserAsync(Guid id, PaginationInfo pagination)
+        public async Task<IEnumerable<Application>> GetByUserAsync(Guid id, PaginationInfo pagination)
         {
-            Expression<Func<Applications, bool>> filter = app => app.Producer != null && app.Producer.Id == id;
+            Expression<Func<Application, bool>> filter = app => app.Producer != null && app.Producer.Id == id;
             return await BuildQuery(filter, pagination).ToListAsync();
         }
 
-        private Band CreateBandWithApplication(Applications app)
+        private Band CreateBandWithApplication(Application app)
         {
             User? user = app.Producer;
             var producer = _repositoryProducer.GetByIdAsync(user.Id).Result;

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/admin/applications")]
-public class ApplicationsController : BaseAppController<Applications>
+public class ApplicationsController : BaseAppController<Application>
 {
     private readonly IAppllicationsService _serviceApp;    
     public ApplicationsController(IAppllicationsService service, IResponseHelper response):base(response,service)
@@ -24,7 +24,7 @@ public class ApplicationsController : BaseAppController<Applications>
     {
         try
         {
-            Applications item = await _serviceApp.ChangeStatusApplicationsAsync(id, status);
+            Application item = await _serviceApp.ChangeStatusApplicationsAsync(id, status);
             return _response.Ok(new ApplicationPresenter(item));
         }
         catch (Exception ex)
@@ -39,7 +39,7 @@ public class ApplicationsController : BaseAppController<Applications>
     {
         try
         {
-            IEnumerable<Applications> items = await _serviceApp.GetByUserAsync(id, pagination);
+            IEnumerable<Application> items = await _serviceApp.GetByUserAsync(id, pagination);
             return _response.Ok(GetPresentCollection(items));
         }
         catch (Exception ex)
@@ -54,7 +54,7 @@ public class ApplicationsController : BaseAppController<Applications>
     {
         try
         {
-            IEnumerable<Applications> items =  await _serviceApp.GetByStatusAsync(id, pagination);
+            IEnumerable<Application> items =  await _serviceApp.GetByStatusAsync(id, pagination);
             return _response.Ok(GetPresentCollection(items));
         }
         catch (Exception ex)
@@ -69,7 +69,7 @@ public class ApplicationsController : BaseAppController<Applications>
     {
         try
         {
-            IEnumerable<Applications> items = await _serviceApp.GetByAdminAsync(id, pagination);
+            IEnumerable<Application> items = await _serviceApp.GetByAdminAsync(id, pagination);
             return _response.Ok(GetPresentCollection(items));
         }     
         catch (Exception ex)
@@ -78,7 +78,7 @@ public class ApplicationsController : BaseAppController<Applications>
         }
     }
 
-    protected override object GetPresent(Applications entity)
+    protected override object GetPresent(Application entity)
     {
         return new ApplicationPresenter(entity);
     }

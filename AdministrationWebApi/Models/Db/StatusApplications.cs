@@ -9,6 +9,6 @@ namespace AdministrationWebApi.Models.Db
         [Required]
         public string? Name { get; set; }
         [JsonIgnore]
-        public List<Applications> Applications { get; set; } = new();
+        public List<Application> Applications { get; set; } = new();
     }
 }

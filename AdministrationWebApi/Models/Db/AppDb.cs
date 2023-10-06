@@ -14,7 +14,7 @@ namespace AdministrationWebApi.Models.Db
         public DbSet<Song>  Songs { get; set; }
         public DbSet<MemberBand>  Members { get; set; }
         public DbSet<Producer> Producers { get; set; }
-        public DbSet<Applications> Applications { get; set; }
+        public DbSet<Application> Applications { get; set; }
         public DbSet<StatusApplications> StatusApplications { get; set; }
         public DbSet<BlacklistUser> Blacklists { get; set; }
         public DbSet<SocialUserCredential> SocialUserCredentials { get; set; }

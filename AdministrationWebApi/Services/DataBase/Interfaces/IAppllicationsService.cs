@@ -3,11 +3,11 @@ using AdministrationWebApi.Models.RequestModels;
 
 namespace AdministrationWebApi.Services.DataBase.Interfaces
 {
-    public interface IAppllicationsService : IBaseService<Applications>
+    public interface IAppllicationsService : IBaseService<Application>
     {
-        Task<IEnumerable<Applications>> GetByUserAsync(Guid id, PaginationInfo pagination);
-        Task<IEnumerable<Applications>> GetByAdminAsync(Guid id, PaginationInfo pagination);
-        Task<IEnumerable<Applications>> GetByStatusAsync(Guid id, PaginationInfo pagination);
-        Task<Applications> ChangeStatusApplicationsAsync(Guid id, CommonRequst entity);
+        Task<IEnumerable<Application>> GetByUserAsync(Guid id, PaginationInfo pagination);
+        Task<IEnumerable<Application>> GetByAdminAsync(Guid id, PaginationInfo pagination);
+        Task<IEnumerable<Application>> GetByStatusAsync(Guid id, PaginationInfo pagination);
+        Task<Application> ChangeStatusApplicationsAsync(Guid id, CommonRequst entity);
     }
 }

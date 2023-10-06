@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace AdministrationWebApi.Models.Db
 {
-    public class Applications:Entity
+    public class Application:Entity
     {
       
         [Required]

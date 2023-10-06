@@ -93,7 +93,7 @@ builder.Services.AddScoped<IBaseService<Genre>, BaseService<Genre>>();
 
 
 // repositories
-builder.Services.AddScoped<IEntityRepository<Applications>, ApplicationReposytory>();
+builder.Services.AddScoped<IEntityRepository<Application>, ApplicationReposytory>();
 builder.Services.AddScoped<IEntityRepository<Album>, AlbumRepository>();
 builder.Services.AddScoped<IEntityRepository<BlacklistUser>, BlacklistRepository>();
 builder.Services.AddScoped<IEntityRepository<Band>, BandRepository>();
