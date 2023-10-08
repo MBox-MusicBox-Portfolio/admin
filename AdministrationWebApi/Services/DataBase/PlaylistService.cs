@@ -13,7 +13,7 @@ namespace AdministrationWebApi.Services.DataBase
 
         public async Task<IEnumerable<Playlist>> GetByOneParams(Guid id, PaginationInfo pagination)
         {
-            Expression<Func<Playlist, bool>> filter = playlist => playlist.User.Id == id;
+            Expression<Func<Playlist, bool>> filter = playlist => playlist.Author.Id == id;
             return await BuildQuery(filter, pagination).ToListAsync();
         }
     }
