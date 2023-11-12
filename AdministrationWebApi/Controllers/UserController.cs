@@ -14,8 +14,8 @@ namespace AdministrationWebApi.Controllers
     public class UserController : BaseAppController<User>
     {
         private readonly IUserService _serviceUser;
-        private readonly AdminUserRoleService _adminUserRoleService;
-        public UserController(IUserService service, IResponseHelper response, AdminUserRoleService adminUserRoleService):base(response,service) 
+        private readonly IAdminUserRoleService _adminUserRoleService;
+        public UserController(IUserService service, IResponseHelper response, IAdminUserRoleService adminUserRoleService):base(response,service) 
         {
             _serviceUser = service;     
             _adminUserRoleService = adminUserRoleService;
