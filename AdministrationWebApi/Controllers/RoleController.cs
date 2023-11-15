@@ -14,8 +14,8 @@ namespace AdministrationWebApi.Controllers
 
     public class RoleController : BaseAppController<Role>
     {
-        private readonly AdminUserRoleService _adminUserRoleService;
-        public RoleController(AdminUserRoleService adminUserRoleService, IResponseHelper response, IBaseService<Role> service) : base(response, service) {
+        private readonly IAdminUserRoleService _adminUserRoleService;
+        public RoleController(IAdminUserRoleService adminUserRoleService, IResponseHelper response, IBaseService<Role> service) : base(response, service) {
             _adminUserRoleService = adminUserRoleService;
         }
 
